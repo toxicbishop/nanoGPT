@@ -1,6 +1,11 @@
 # nanoGPT — Character-Level Transformer from Scratch
 
-A minimal, heavily-commented GPT implementation in pure PyTorch.
+![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square&logo=python&logoColor=white)
+![RAG](https://img.shields.io/badge/RAG-FAISS%20%2B%20SentenceTransformers-green?style=flat-square)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg?style=flat-square)
+
+A CPU-friendly character-level GPT from scratch in PyTorch featuring modern architecture (RoPE, RMSNorm, GQA) and a modular RAG pipeline with FAISS.
 No Hugging Face, no magic — every line is readable and educational.
 
 ```
@@ -18,6 +23,13 @@ nanogpt/
 ├── model.py        ← The GPT model (attention, blocks, generation)
 ├── train.py        ← Training loop
 ├── generate.py     ← Load a checkpoint and sample text
+├── rag/            ← Retrieval-Augmented Generation (RAG) pipeline
+│   ├── chunker.py      ← Sliding window text chunker
+│   ├── embedder.py     ← Sentence-transformers embedding wrapper
+│   ├── store.py        ← FAISS Vector Store manager
+│   ├── retriever.py    ← Top-k vector similarity search
+│   ├── pipeline.py     ← Prompt builder and local LLM connector
+│   └── demo.py         ← Interactive CLI & verification demo
 └── requirements.txt
 ```
 
@@ -183,3 +195,73 @@ python train.py --resume checkpoints/ckpt_02000.pt
 | 500 | ~2.0 | ~2.1 | Recognisable words |
 | 2000 | ~1.5 | ~1.6 | Shakespearean structure |
 | 5000 | ~1.2 | ~1.4 | Convincing prose |
+
+---
+
+## Stage 2: Retrieval-Augmented Generation (RAG)
+
+A fully modular RAG pipeline that allows you to perform semantic search and context injection over your corpus using `FAISS` and `sentence-transformers`.
+
+### 1. Install RAG dependencies
+```Power Shell
+pip install -r rag/requirements.txt
+```
+
+### 2. Run the Interactive RAG Demo
+```Power Shell
+python rag/demo.py
+```
+
+### Sample Demo Output
+```
+------------------------- RAG Demo -------------------------
+Corpus : D:\Code\Repo\SLM\nanogpt\input.txt
+Index  : D:\Code\Repo\SLM\nanogpt\rag_index
+
+[1/4] Building FAISS index from corpus ...
+      This embeds ~4000 chunks — takes ~2 min on CPU, once only.
+
+Loading embedding model: sentence-transformers/all-MiniLM-L6-v2
+  Embedding dim : 384
+  Embedding 4648 chunks from 'input.txt' ...
+  Added 4648 chunks | Total: 4648
+VectorStore saved -> D:\Code\Repo\SLM\nanogpt\rag_index/ (4648 vectors, dim=384)
+
+Index built in 51.6s and saved to 'D:\Code\Repo\SLM\nanogpt\rag_index/'
+
+Index ready: 4648 chunks indexed
+
+-------------- Retrieval Demo (no LLM needed) --------------
+
+Query: 'What does Romeo say about Juliet and the sun?'
+  [1] score=0.6661 #############
+       me, shall we go?
+
+BENVOLIO:
+Go, then; for 'tis in vain
+To seek him here that means not to be found.
+
+ROMEO:
+He jests at scars that never felt a wound.
+But, soft! what light through yonder window breaks?
+It is the east, and Juliet is the sun.
+Arise, fair sun, and kill the envious moon,
+Who is already
+
+Query: 'Tell me about Juliet's poison and death.'
+  [1] score=0.6608 #############
+       As I intended, for it wrought on her
+The form of death: meantime I writ to Romeo,
+That he should hither come as this dire night,
+To help to take her from her borrow'd grave,
+Being the time the potion's force should cease.
+But he which bore my letter, Friar John,
+Was stay'd by accident, and yesternig
+```
+
+To run with full LLM-augmented generation:
+1. Download [Ollama](https://ollama.com)
+2. Run `ollama pull llama3.2:1b`
+3. Start the Ollama server: `ollama serve`
+4. Run `python rag/demo.py` again.
+
