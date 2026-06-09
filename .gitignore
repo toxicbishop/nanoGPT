@@ -1,0 +1,48 @@
+# ==========================================
+# Python Bytecode & Cache
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.coverage
+htmlcov/
+
+# ==========================================
+# Virtual Environments (Crucial)
+# ==========================================
+venv/
+.venv/
+env/
+ENV/
+ENV-py3/
+
+# ==========================================
+# Package Manager & Build Artifacts
+# ==========================================
+dist/
+build/
+*.egg-info/
+.eggs/
+# Un-comment the next line if you want to lock dependencies via poetry without committing the lock
+# .poetry.lock
+
+# ==========================================
+# IDEs and OS Files
+# ==========================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# Secrets & Environment Variables (CRITICAL)
+# ==========================================
+.env
+.env.local
+secrets.json
+*.pem
+*.key
