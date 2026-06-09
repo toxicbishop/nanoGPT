@@ -46,3 +46,11 @@ Thumbs.db
 secrets.json
 *.pem
 *.key
+
+# ==========================================
+# ML/RAG Specific Ignores
+# ==========================================
+checkpoints/
+checkpoints_v2/
+input.txt
+rag_index/
