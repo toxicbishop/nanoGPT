@@ -25,24 +25,39 @@ nanogpt/
 
 ## Quickstart
 
-### 1. Install dependencies
+### 1. Create the virtual environment
+```Power Shell
+python -m venv .venv
+```
 
-```bash
+### 2. Change execution policy to allow script activation (Windows/PowerShell only)
+```Power Shell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+### 3. Activate the virtual environment
+```Power Shell
+.venv/Scripts/activate
+```
+
+### 3. Install dependencies
+
+```Power Shell
 pip install -r requirements.txt
 ```
 
-### 2. Download a sample corpus (Shakespeare ~1MB)
+### 4. Download a sample corpus (Shakespeare ~1MB)
 
-```bash
+```Power Shell
 python data.py --download shakespeare
 # → downloads input.txt
 ```
 
 Or use **your own text file** — just point `--data` at it.
 
-### 3. Train
+### 5. Train
 
-```bash
+```Power Shell
 # CPU-friendly tiny model (~3 min on CPU)
 python train.py --preset tiny
 
@@ -64,9 +79,9 @@ What, art thou so brave? then let us hear
 The king himself hath spoke it; and for my part...
 ```
 
-### 4. Generate text
+### 6. Generate text
 
-```bash
+```Power Shell
 # Single prompt
 python generate.py \
     --checkpoint checkpoints/ckpt_02000.pt \
@@ -154,7 +169,7 @@ After you've trained this:
 
 ## Resume Training
 
-```bash
+```Power Shell
 python train.py --resume checkpoints/ckpt_02000.pt
 ```
 
