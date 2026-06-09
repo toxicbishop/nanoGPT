@@ -14,24 +14,9 @@ No Hugging Face, no magic — every line is readable and educational.
 
 ---
 
-## Project Structure
+## System Architecture
 
-```
-nanogpt/
-├── config.py       ← All hyperparameters (edit this to experiment)
-├── data.py         ← Character tokenizer + data loader
-├── model.py        ← The GPT model (attention, blocks, generation)
-├── train.py        ← Training loop
-├── generate.py     ← Load a checkpoint and sample text
-├── rag/            ← Retrieval-Augmented Generation (RAG) pipeline
-│   ├── chunker.py      ← Sliding window text chunker
-│   ├── embedder.py     ← Sentence-transformers embedding wrapper
-│   ├── store.py        ← FAISS Vector Store manager
-│   ├── retriever.py    ← Top-k vector similarity search
-│   ├── pipeline.py     ← Prompt builder and local LLM connector
-│   └── demo.py         ← Interactive CLI & verification demo
-└── requirements.txt
-```
+![nano GPT System Architecture](assets/nano%20GPT-System%20Architecture.png)
 
 ---
 
