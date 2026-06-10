@@ -165,7 +165,7 @@ class RAGPipeline:
         import os
 
         # Try to load existing index
-        if index_dir and os.path.exists(os.path.join(index_dir, "index.faiss")):
+        if index_dir and os.path.exists(os.path.join(index_dir, "chroma.sqlite3")):
             print(f"Loading existing index from '{index_dir}' ...")
             retriever = Retriever.load(index_dir, chunk_size=chunk_size, overlap=overlap)
         else:

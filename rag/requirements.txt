@@ -1,4 +1,4 @@
-faiss-cpu>=1.7.4          # vector similarity search (CPU build, no CUDA needed)
+chromadb>=1.5.0           # vector database
 sentence-transformers>=2.6.0  # pretrained embedding models
 numpy>=1.24.0
 requests>=2.31.0          # for Ollama HTTP API (optional LLM backend)
