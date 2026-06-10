@@ -2,7 +2,7 @@
 
 ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
-![RAG](https://img.shields.io/badge/RAG-FAISS%20%2B%20SentenceTransformers-green.svg)
+![RAG](https://img.shields.io/badge/RAG-ChromaDB%20%2B%20SentenceTransformers-green.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)
 
 A CPU-friendly character-level GPT from scratch in PyTorch featuring modern architecture (RoPE, RMSNorm, GQA) and a modular RAG pipeline with Chroma DB.
@@ -185,7 +185,7 @@ python train.py --resume checkpoints/ckpt_02000.pt
 
 ## Stage 2: Retrieval-Augmented Generation (RAG)
 
-A fully modular RAG pipeline that allows you to perform semantic search and context injection over your corpus using `FAISS` and `sentence-transformers`.
+A fully modular RAG pipeline that allows you to perform semantic search and context injection over your corpus using `ChromaDB` and `sentence-transformers`.
 
 ### 1. Install RAG dependencies
 ```Power Shell
@@ -203,7 +203,7 @@ python rag/demo.py
 Corpus : D:\Code\Repo\SLM\nanogpt\input.txt
 Index  : D:\Code\Repo\SLM\nanogpt\rag_index
 
-[1/4] Building FAISS index from corpus ...
+[1/4] Building ChromaDB index from corpus ...
       This embeds ~4000 chunks — takes ~2 min on CPU, once only.
 
 Loading embedding model: sentence-transformers/all-MiniLM-L6-v2
@@ -212,36 +212,41 @@ Loading embedding model: sentence-transformers/all-MiniLM-L6-v2
   Added 4648 chunks | Total: 4648
 VectorStore saved -> D:\Code\Repo\SLM\nanogpt\rag_index/ (4648 vectors, dim=384)
 
-Index built in 51.6s and saved to 'D:\Code\Repo\SLM\nanogpt\rag_index/'
+Index built in 64.2s and saved to 'D:\Code\Repo\SLM\nanogpt\rag_index/'
 
 Index ready: 4648 chunks indexed
 
 -------------- Retrieval Demo (no LLM needed) --------------
 
-Query: 'What does Romeo say about Juliet and the sun?'
-  [1] score=0.6661 #############
-       me, shall we go?
+Query: 'What does Hamlet say about death and dying?'
+  [1] score=0.5423 ##########
+       kill your husband.
 
-BENVOLIO:
-Go, then; for 'tis in vain
-To seek him here that means not to be found.
+LADY ANNE:
+Why, then he is alive.
 
-ROMEO:
-He jests at scars that never felt a wound.
-But, soft! what light through yonder window breaks?
-It is the east, and Juliet is the sun.
-Arise, fair sun, and kill the envious moon,
-Who is already
+GLOUCESTER:
+Nay, he is dead; and slain by Edward's hand.
 
-Query: 'Tell me about Juliet's poison and death.'
-  [1] score=0.6608 #############
-       As I intended, for it wrought on her
-The form of death: meantime I writ to Romeo,
-That he should hither come as this dire night,
-To help to take her from her borrow'd grave,
-Being the time the potion's force should cease.
-But he which bore my letter, Friar John,
-Was stay'd by accident, and yesternig
+LADY ANNE:
+In thy foul throat thou li...
+
+Query: 'A betrayal and murder of a king'
+  [1] score=0.6159 ############
+       die your king,
+As ours by murder, to make him a king!
+Edward thy son, which now is Prince of Wales,
+For Edward my son, which was Prince of Wales,
+Die...
+
+Query: 'Love and romantic feelings'
+  [1] score=0.4751 #########
+       ng first create!
+O heavy lightness! serious vanity!
+Mis-shapen chaos of well-seeming forms!
+Feather of lead, bright smoke, cold fire,
+sick health!
+Sti...
 ```
 
 To run with full LLM-augmented generation:
