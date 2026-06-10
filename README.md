@@ -255,3 +255,6 @@ To run with full LLM-augmented generation:
 3. Start the Ollama server: `ollama serve`
 4. Run `python rag/demo.py` again.
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
