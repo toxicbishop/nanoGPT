@@ -57,13 +57,13 @@ def run_demo():
     print()
 
     # ── Step 1-4: Build or load index ─────────────────────────────────────────
-    index_exists = os.path.exists(os.path.join(INDEX_DIR, "index.faiss"))
+    index_exists = os.path.exists(os.path.join(INDEX_DIR, "chroma.sqlite3"))
 
     if index_exists:
-        print("[1/4] Loading existing FAISS index (skip re-embedding) ...")
+        print("[1/4] Loading existing ChromaDB index (skip re-embedding) ...")
         rag = RAGPipeline.from_index(INDEX_DIR, top_k=4)
     else:
-        print("[1/4] Building FAISS index from corpus ...")
+        print("[1/4] Building ChromaDB index from corpus ...")
         print("      This embeds ~4000 chunks — takes ~2 min on CPU, once only.\n")
         t0 = time.time()
         rag = RAGPipeline.from_files(
