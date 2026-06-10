@@ -5,7 +5,7 @@
 ![RAG](https://img.shields.io/badge/RAG-FAISS%20%2B%20SentenceTransformers-green.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)
 
-A CPU-friendly character-level GPT from scratch in PyTorch featuring modern architecture (RoPE, RMSNorm, GQA) and a modular RAG pipeline with FAISS.
+A CPU-friendly character-level GPT from scratch in PyTorch featuring modern architecture (RoPE, RMSNorm, GQA) and a modular RAG pipeline with Chroma DB.
 No Hugging Face, no magic — every line is readable and educational.
 
 ```
