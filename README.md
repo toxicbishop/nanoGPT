@@ -1,7 +1,7 @@
 # nanoGPT — Character-Level Transformer from Scratch
 
 ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?logo=pytorch&logoColor=white)
-![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
+![Python](https://img.shields.io/badge/python-3.12.x-blue.svg)
 ![RAG](https://img.shields.io/badge/RAG-ChromaDB%20%2B%20SentenceTransformers-green.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)
 
