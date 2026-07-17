@@ -1,9 +1,10 @@
 # nanoGPT — Character-Level Transformer from Scratch
 
-![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?logo=pytorch&logoColor=white)
-![Python](https://img.shields.io/badge/python-3.12.x-blue.svg)
-![RAG](https://img.shields.io/badge/RAG-ChromaDB%20%2B%20SentenceTransformers-green.svg)
-![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://your-app-url.streamlit.app/)
+![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat&logo=pytorch&logoColor=white)
+![Python](https://img.shields.io/badge/python-3.12.x-blue.svg?style=flat)
+![RAG](https://img.shields.io/badge/RAG-ChromaDB%20%2B%20SentenceTransformers-green.svg?style=flat)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg?style=flat)
 
 A CPU-friendly character-level GPT from scratch in PyTorch featuring modern architecture (RoPE, RMSNorm, GQA) and a modular RAG pipeline with Chroma DB.
 No Hugging Face, no magic — every line is readable and educational.
