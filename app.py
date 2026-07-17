@@ -10,8 +10,8 @@ try:
 except ImportError:
     Retriever = None
 
-st.set_page_config(page_title="nanoGPT + RAG", page_icon="🤖", layout="wide")
-st.title("🤖 nanoGPT & Semantic Search")
+st.set_page_config(page_title="nanoGPT + RAG", layout="wide")
+st.title("nanoGPT & Semantic Search")
 
 # --- Globals ---
 CKPT_DIR = "checkpoints_v2"
@@ -64,7 +64,7 @@ st.sidebar.markdown(f"- **Layers**: {cfg.n_layer}")
 st.sidebar.markdown(f"- **Embedding**: {cfg.n_embd}")
 st.sidebar.markdown(f"- **Heads**: {cfg.n_head} (KV: {cfg.n_kv_head})")
 
-tab1, tab2 = st.tabs(["📝 Text Generation", "🔍 Semantic RAG Search"])
+tab1, tab2 = st.tabs(["Text Generation", "Semantic RAG Search"])
 
 with tab1:
     st.markdown("### Generate text from scratch")
