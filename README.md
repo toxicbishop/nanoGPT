@@ -263,6 +263,24 @@ To run with full LLM-augmented generation:
 3. Start the Ollama server: `ollama serve`
 4. Run `python rag/demo.py` again.
 
+## Streamlit Deployment
+
+You can easily deploy this model and the RAG pipeline as a web application on [Streamlit Cloud](https://streamlit.io/cloud) for free.
+
+1. Ensure your trained checkpoint (e.g., `ckpt_01000.pt`) and `tokenizer.pkl` are in `checkpoints_v2/` and are tracked by Git (you may need to force-add them or update `.gitignore`).
+2. If using RAG, ensure `rag_index/chroma.sqlite3` is committed.
+3. Push your repository to GitHub.
+4. Go to [share.streamlit.io](https://share.streamlit.io) and click **New app**.
+5. Select your GitHub repository, branch, and set the **Main file path** to `app.py`.
+6. Click **Deploy**. Streamlit Cloud will automatically install dependencies from `requirements.txt` and launch the app.
+
+### Troubleshooting
+
+- **`_pickle.UnpicklingError` when loading checkpoint**: Recent versions of PyTorch default to `weights_only=True` for security. Because our checkpoint contains a custom `GPTConfig` object, ensure you use `torch.load(..., weights_only=False)` in `app.py`.
+- **App crashes on memory on Streamlit Cloud**: The free tier has a 1GB memory limit. Ensure you are using the `--preset tiny` checkpoint (~3.5M params) rather than the default 10M parameter model, which might spike RAM during generation.
+- **Missing Tokenizer Error**: The tokenizer is saved separately from the checkpoint (`tokenizer.pkl`). Ensure both files are committed in the same directory.
+- **RAG takes a long time on first load**: `sentence-transformers` and `chromadb` are heavy dependencies. The very first load on Streamlit Cloud might take a minute or two as it downloads the embedding models.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
