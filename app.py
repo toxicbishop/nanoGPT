@@ -26,7 +26,7 @@ def load_model():
         return None, None, None
     path = os.path.join(CKPT_DIR, files[-1])
     
-    ckpt = torch.load(path, map_location="cpu")
+    ckpt = torch.load(path, map_location="cpu", weights_only=False)
     cfg = ckpt["config"]
     vocab_size = ckpt["vocab_size"]
     
