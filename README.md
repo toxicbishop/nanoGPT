@@ -6,6 +6,8 @@
 ![RAG](https://img.shields.io/badge/RAG-ChromaDB%20%2B%20SentenceTransformers-green.svg?style=flat)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg?style=flat)
 
+Live Demo:[https://nanogpt.streamlit.app](https://nanogpt.streamlit.app)
+
 A CPU-friendly character-level GPT from scratch in PyTorch featuring modern architecture (RoPE, RMSNorm, GQA) and a modular RAG pipeline with Chroma DB.
 No Hugging Face, no magic — every line is readable and educational.
 
