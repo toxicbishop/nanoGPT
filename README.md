@@ -1,6 +1,6 @@
 # nanoGPT — Character-Level Transformer from Scratch
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://your-app-url.streamlit.app/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://nanogpt.streamlit.app)
 ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat&logo=pytorch&logoColor=white)
 ![Python](https://img.shields.io/badge/python-3.12.x-blue.svg?style=flat)
 ![RAG](https://img.shields.io/badge/RAG-ChromaDB%20%2B%20SentenceTransformers-green.svg?style=flat)
