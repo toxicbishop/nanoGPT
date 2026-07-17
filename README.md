@@ -22,6 +22,12 @@ No Hugging Face, no magic — every line is readable and educational.
 
 ---
 
+## App Interface
+
+![nanoGPT App Interface](assets/nanoGPT-interface.png)
+
+---
+
 ## Quickstart
 
 ### 1. Create the virtual environment
