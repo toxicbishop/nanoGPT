@@ -15,6 +15,7 @@ st.title("nanoGPT & Semantic Search")
 
 # --- Globals ---
 CKPT_DIR = "checkpoints_v2"
+CKPT_NAME = "ckpt_03000.pt"
 INDEX_DIR = "rag_index"
 
 @st.cache_resource(show_spinner="Loading model...")
