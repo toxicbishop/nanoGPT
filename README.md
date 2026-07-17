@@ -8,6 +8,8 @@
 A CPU-friendly character-level GPT from scratch in PyTorch featuring modern architecture (RoPE, RMSNorm, GQA) and a modular RAG pipeline with Chroma DB.
 No Hugging Face, no magic — every line is readable and educational.
 
+> **Note:** This model is currently trained exclusively on Shakespearean text. It generates text in the style and vocabulary of Shakespeare and is not a general-purpose instruction-following model.
+
 ```
 ~250 lines of model code  |  ~200 lines of training code
 ```
