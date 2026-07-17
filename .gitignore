@@ -51,6 +51,6 @@ secrets.json
 # ML/RAG Specific Ignores
 # ==========================================
 checkpoints/
-checkpoints_v2/
+# checkpoints_v2/
 input.txt
-rag_index/
+# rag_index/
