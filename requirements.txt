@@ -1,5 +1,5 @@
 torch>=2.0.0
-numpy>=1.24.0
+numpy>=2.5.1
 streamlit>=1.35.0
 chromadb>=1.5.0
 sentence-transformers>=2.6.0

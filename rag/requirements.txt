@@ -1,4 +1,4 @@
 chromadb>=1.5.0           # vector database
 sentence-transformers>=2.6.0  # pretrained embedding models
-numpy>=1.24.0
+numpy>=2.5.1
 requests>=2.31.0          # for Ollama HTTP API (optional LLM backend)
