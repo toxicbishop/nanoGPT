@@ -4,6 +4,14 @@ from .embedder import Embedder
 from .store import VectorStore
 from .retriever import Retriever
 from .pipeline import RAGPipeline, build_prompt
+from .security import (
+    IngestionSanitizer,
+    InputGuardrail,
+    OutputGuardrail,
+    CanaryTokenManager,
+    SecurePromptBuilder,
+    GuardrailResult,
+)
 
 __all__ = [
     "chunk_text", "chunk_by_paragraph", "chunk_file",
@@ -11,4 +19,10 @@ __all__ = [
     "VectorStore",
     "Retriever",
     "RAGPipeline", "build_prompt",
+    "IngestionSanitizer",
+    "InputGuardrail",
+    "OutputGuardrail",
+    "CanaryTokenManager",
+    "SecurePromptBuilder",
+    "GuardrailResult",
 ]

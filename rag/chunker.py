@@ -17,11 +17,16 @@ Why overlap?
 """
 
 
+from typing import Optional
+from .security import IngestionSanitizer
+
+
 def chunk_text(
     text: str,
     chunk_size: int = 256,      # max characters per chunk
     overlap: int = 64,           # characters shared between adjacent chunks
     min_chunk_size: int = 50,    # discard chunks shorter than this (e.g. trailing whitespace)
+    sanitize: bool = True,       # strip invisible unicode and hidden injection payloads
 ) -> list[str]:
     """
     Split text into overlapping fixed-size character chunks.
@@ -41,6 +46,9 @@ def chunk_text(
         -> ["ABCD", "DEFG", "GHIJ"]
     """
     assert chunk_size > overlap, "chunk_size must be greater than overlap"
+    if sanitize:
+        text, _ = IngestionSanitizer.sanitize(text)
+
     step = chunk_size - overlap
     chunks = []
     start = 0
@@ -57,6 +65,7 @@ def chunk_by_paragraph(
     text: str,
     max_chunk_size: int = 512,
     overlap_paragraphs: int = 1,
+    sanitize: bool = True,
 ) -> list[str]:
     """
     Split text on blank lines (paragraphs), then merge small paragraphs
@@ -68,6 +77,9 @@ def chunk_by_paragraph(
     overlap_paragraphs: how many paragraphs from the previous chunk to
                         prepend to the next one for context continuity.
     """
+    if sanitize:
+        text, _ = IngestionSanitizer.sanitize(text)
+
     # Split on one or more blank lines
     paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
 
@@ -94,15 +106,17 @@ def chunk_by_paragraph(
 def chunk_file(
     path: str,
     mode: str = "fixed",
+    sanitize: bool = True,
     **kwargs,
 ) -> list[str]:
     """
     Load a text file and chunk it.
 
     Args:
-        path:   Path to .txt file.
-        mode:   "fixed" (character windows) or "paragraph" (blank-line splits).
-        kwargs: Passed to chunk_text() or chunk_by_paragraph().
+        path:     Path to .txt file.
+        mode:     "fixed" (character windows) or "paragraph" (blank-line splits).
+        sanitize: Strip invisible unicode and hidden injection payloads.
+        kwargs:   Passed to chunk_text() or chunk_by_paragraph().
 
     Returns:
         List of chunk strings.
@@ -111,8 +125,8 @@ def chunk_file(
         text = f.read()
 
     if mode == "paragraph":
-        return chunk_by_paragraph(text, **kwargs)
-    return chunk_text(text, **kwargs)
+        return chunk_by_paragraph(text, sanitize=sanitize, **kwargs)
+    return chunk_text(text, sanitize=sanitize, **kwargs)
 
 
 # ── Quick demo ────────────────────────────────────────────────────────────────
