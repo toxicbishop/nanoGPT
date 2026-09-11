@@ -105,27 +105,31 @@ python generate.py \
 
 ## Configuration
 
-Edit `config.py` or pass flags. Key knobs:
+Edit `config.py` or pass flags. Key knobs include architectural changes introduced in v2 (like GQA, RoPE, and RMSNorm):
 
 | Parameter | Default | Effect |
 |---|---|---|
 | `block_size` | 256 | Context window. Longer = more memory |
-| `n_embd` | 384 | Embedding size. Larger = smarter, slower |
-| `n_head` | 6 | Attention heads. Must divide `n_embd` |
-| `n_layer` | 6 | Transformer depth |
-| `dropout` | 0.2 | Regularisation. 0 for tiny datasets |
-| `batch_size` | 64 | Reduce if OOM |
+| `n_embd` | 256 | Embedding size. Larger = smarter, slower |
+| `n_head` | 8 | Number of QUERY attention heads. Must divide `n_embd` |
+| `n_kv_head` | 2 | Number of KEY/VALUE heads (v2 GQA knob) |
+| `n_layer` | 8 | Transformer depth |
+| `dropout` | 0.1 | Regularisation. 0 for tiny datasets |
+| `batch_size` | 32 | Reduce if OOM |
 | `learning_rate` | 3e-4 | AdamW LR |
+| `rope_theta` | 10000.0 | RoPE base frequency (v2) |
 | `temperature` | 0.8 | Generation: higher = more random |
 | `top_k` | 40 | 0 = pure sampling, 40 = focused |
 
-### Presets
+### Presets and Model Sizes
 
-```python
-# In config.py
-TINY_CONFIG   # n_embd=128, n_layer=4  — trains in minutes on CPU
-SMALL_CONFIG  # n_embd=384, n_layer=6  — ~10M params, needs GPU
-```
+#### v2 Presets (Modernised Architecture)
+- **`TINY_CONFIG` (~3.5M params)**: CPU-friendly, trains in ~20 minutes on CPU. 8 layers deep, `n_embd=256`, `n_head=8`, `n_kv_head=2` (GQA 4:1 ratio), `block_size=256`, `batch_size=16`.
+- **`SMALL_CONFIG` (~12M params)**: Requires a GPU or patience. 12 layers deep, `n_embd=512`, `n_head=8`, `n_kv_head=2`, `block_size=512`, `batch_size=32`.
+
+#### v1 Presets (Legacy Architecture)
+- **`TINY_CONFIG_v1`**: `n_embd=128`, `n_layer=4` — trains in minutes on CPU.
+- **`SMALL_CONFIG_v1`**: ~10M params, `n_embd=384`, `n_layer=6` — needs GPU.
 
 ---
 
