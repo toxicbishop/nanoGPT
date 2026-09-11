@@ -64,6 +64,7 @@ class Retriever:
         text: str,
         source: str = "inline",
         chunk_mode: str = "fixed",
+        sanitize: bool = True,
     ) -> int:
         """
         Chunk, embed, and index a raw string.
@@ -72,15 +73,16 @@ class Retriever:
             text:       The document text.
             source:     A label stored in metadata (e.g. filename).
             chunk_mode: "fixed" or "paragraph".
+            sanitize:   Strip zero-width characters and hidden injection phrases.
 
         Returns:
             Number of chunks added.
         """
         if chunk_mode == "paragraph":
             from .chunker import chunk_by_paragraph
-            chunks = chunk_by_paragraph(text, max_chunk_size=self.chunk_size)
+            chunks = chunk_by_paragraph(text, max_chunk_size=self.chunk_size, sanitize=sanitize)
         else:
-            chunks = chunk_text(text, self.chunk_size, self.overlap)
+            chunks = chunk_text(text, self.chunk_size, self.overlap, sanitize=sanitize)
 
         if not chunks:
             print(f"  [WARNING] No chunks produced from '{source}'")
@@ -96,6 +98,7 @@ class Retriever:
         self,
         path: str,
         chunk_mode: str = "fixed",
+        sanitize: bool = True,
     ) -> int:
         """
         Load a .txt file and add it to the index.
@@ -103,6 +106,7 @@ class Retriever:
         Args:
             path:       Path to a UTF-8 text file.
             chunk_mode: "fixed" or "paragraph".
+            sanitize:   Strip zero-width characters and hidden injection phrases.
 
         Returns:
             Number of chunks added.
@@ -110,7 +114,7 @@ class Retriever:
         assert os.path.exists(path), f"File not found: {path}"
         with open(path, "r", encoding="utf-8") as f:
             text = f.read()
-        return self.add_text(text, source=os.path.basename(path), chunk_mode=chunk_mode)
+        return self.add_text(text, source=os.path.basename(path), chunk_mode=chunk_mode, sanitize=sanitize)
 
     # ── Retrieval ─────────────────────────────────────────────────────────────
 

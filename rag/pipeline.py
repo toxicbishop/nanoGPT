@@ -24,7 +24,15 @@ it returns just the retrieved context so you can still test retrieval.
 """
 
 import requests # type: ignore
+from typing import Optional, Tuple, Union
 from .retriever import Retriever
+from .security import (
+    InputGuardrail,
+    OutputGuardrail,
+    CanaryTokenManager,
+    SecurePromptBuilder,
+    GuardrailResult,
+)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -43,17 +51,25 @@ Question: {question}
 Answer:"""
 
 
-def build_prompt(question: str, context_chunks: list[str]) -> str:
+def build_prompt(
+    question: str,
+    context_chunks: list[str],
+    secure: bool = False,
+    canary_token: Optional[str] = None,
+) -> str:
     """
-    Stuff retrieved chunks into the prompt template.
+    Format chunks and question into prompt.
 
     Args:
         question:       The user's question.
-        context_chunks: List of retrieved text chunks (ordered by relevance).
-
-    Returns:
-        A prompt string ready to send to the LLM.
+        context_chunks: List of retrieved text chunks.
+        secure:         If True, uses structural XML isolation & delimiter escaping.
+        canary_token:   Optional canary token to embed into the system prompt.
     """
+    if secure:
+        token = canary_token or "canary_default"
+        return SecurePromptBuilder.build(question, context_chunks, canary_token=token)
+
     context = "\n\n---\n\n".join(
         f"[Chunk {i+1}]\n{chunk}" for i, chunk in enumerate(context_chunks)
     )
@@ -139,11 +155,18 @@ class RAGPipeline:
         llm_model: str = "llama3.2:1b",
         top_k: int = 4,
         temperature: float = 0.3,
+        secure_mode: bool = True,
+        input_guardrail: Optional[InputGuardrail] = None,
+        output_guardrail: Optional[OutputGuardrail] = None,
     ):
         self.retriever = retriever
         self.llm_model = llm_model
         self.top_k = top_k
         self.temperature = temperature
+        self.secure_mode = secure_mode
+        self.canary_manager = CanaryTokenManager()
+        self.input_guardrail = input_guardrail or InputGuardrail()
+        self.output_guardrail = output_guardrail or OutputGuardrail(self.canary_manager)
 
     # ── Factory methods ───────────────────────────────────────────────────────
 
@@ -190,24 +213,47 @@ class RAGPipeline:
         self,
         question: str,
         show_sources: bool = False,
-    ) -> str:
+        return_metadata: bool = False,
+    ) -> Union[str, Tuple[str, dict]]:
         """
-        The full RAG loop:
-            1. Embed the question
-            2. Retrieve top-k relevant chunks from FAISS
-            3. Build a prompt (context + question)
-            4. Send to Ollama LLM -> answer
-            5. Return answer string
+        The full secure RAG loop:
+            1. [Input Guardrail] Check user query for jailbreaks / injections
+            2. [Retriever] Retrieve top-k relevant chunks
+            3. [PromptBuilder] Format with XML tags, escape delimiters, inject canary token
+            4. [LLM] Generate response
+            5. [Output Guardrail] Verify no canary leakage or malicious takeover echo
 
         Args:
-            question:     Natural language question.
-            show_sources: If True, prints the retrieved chunks before answering.
+            question:        Natural language question.
+            show_sources:    If True, prints retrieved chunks before answering.
+            return_metadata: If True, returns (answer, security_telemetry_dict).
 
         Returns:
-            Answer string from the LLM (or retrieved context if no LLM).
+            Answer string (or (answer, telemetry) if return_metadata=True).
         """
-        # Step 1 + 2: retrieve
-        results = self.retriever.retrieve(question, k=self.top_k)
+        security_telemetry = {
+            "secure_mode": self.secure_mode,
+            "input_guardrail_passed": True,
+            "canary_token": None,
+            "output_guardrail_passed": True,
+            "reasons": [],
+        }
+
+        # Step 1: Input Guardrail
+        clean_question = question
+        if self.secure_mode:
+            in_result = self.input_guardrail.evaluate(question)
+            if not in_result.passed:
+                security_telemetry["input_guardrail_passed"] = False
+                security_telemetry["reasons"].append(in_result.reason)
+                blocked_msg = f"[SECURITY BLOCK] {in_result.reason}"
+                if return_metadata:
+                    return blocked_msg, security_telemetry
+                return blocked_msg
+            clean_question = in_result.sanitized_text
+
+        # Step 2: Retrieve
+        results = self.retriever.retrieve(clean_question, k=self.top_k)
         chunks = [r["text"] for r in results]
 
         if show_sources:
@@ -217,21 +263,48 @@ class RAGPipeline:
                 print(f"       {r['text'][:120].strip()}...")
             print()
 
-        # Step 3: build prompt
-        prompt = build_prompt(question, chunks)
+        # Step 3: Build Prompt (with Canary Token if secure_mode is active)
+        canary = self.canary_manager.generate() if self.secure_mode else None
+        security_telemetry["canary_token"] = canary
+        prompt = build_prompt(
+            clean_question,
+            chunks,
+            secure=self.secure_mode,
+            canary_token=canary,
+        )
 
-        # Step 4: call LLM
+        # Step 4: Call LLM
         if not is_ollama_running():
             print("[INFO] Ollama not running. Returning retrieved context only.")
             print("       To enable LLM answers: install Ollama, then run:")
             print("         ollama pull llama3.2:1b && ollama serve")
             print()
-            return "\n\n---\n\n".join(chunks)
+            context_fallback = "\n\n---\n\n".join(chunks)
+            if return_metadata:
+                return context_fallback, security_telemetry
+            return context_fallback
 
-        answer = call_ollama(prompt, model=self.llm_model, temperature=self.temperature)
-        if answer is None:
-            return "[LLM generation failed]"
-        return answer
+        raw_answer = call_ollama(prompt, model=self.llm_model, temperature=self.temperature)
+        if raw_answer is None:
+            err_msg = "[LLM generation failed]"
+            if return_metadata:
+                return err_msg, security_telemetry
+            return err_msg
+
+        # Step 5: Output Guardrail
+        final_answer = raw_answer
+        if self.secure_mode:
+            out_result = self.output_guardrail.evaluate(raw_answer, active_canary=canary)
+            if not out_result.passed:
+                security_telemetry["output_guardrail_passed"] = False
+                security_telemetry["reasons"].append(out_result.reason)
+                final_answer = f"[SECURITY INTERCEPTED] {out_result.sanitized_text}"
+            else:
+                final_answer = out_result.sanitized_text
+
+        if return_metadata:
+            return final_answer, security_telemetry
+        return final_answer
 
     def interactive(self):
         """Simple REPL — type questions, get answers."""
